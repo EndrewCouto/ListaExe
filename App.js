@@ -1,58 +1,59 @@
 import React, {useState} from 'react';
-import {Text, View, FlatList } from 'react-native';
-import styles from './style';
-
-import ContatoInput from './components/ContatoInput';
-import ContatoItem from './components/ContatoItem';
+import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
+import LembreteItem from './components/LembreteItem'
+import LembreteInput from './components/LembreteInput';
+import Cabecalho from './components/Cabecalho';
+import TelaPrincal from './medidas/TelaPrincipal'
 
 export default function App() {
-  const [contatos, setContatos] = useState ([]);
 
-  const [contadorContatos, setContadorContatos] = useState(10);
+  const [lembretes, setLembretes] = useState([]);
 
-  const adicionarContato = (nome, telefone) => {
-    console.log("Contato-Nome: " + nome);
-    console.log("Contato-Telefone: " + telefone);
-    setContatos (contatos => {
-      console.log (contatos);
-      setContadorContatos(contadorContatos + 2);
-      return [
-        {
-          key: contadorContatos.toString(),
-          value: {nome: nome, telefone: telefone}
-        }, 
-        ...contatos
-      ];
+  const [contadorLembretes, setContadorLembretes] = useState(10);
+
+  const adicionarLembrete = (lembrete, telefone) => {
+    //spread
+    setLembretes (lembretes => {
+      console.log (lembretes);
+      if(contadorLembretes % 2 == 1){
+        setContadorLembretes(contadorLembretes+1); 
+      }else{
+        setContadorLembretes(contadorLembretes+2); 
+      }
+      return [{key: contadorLembretes.toString(), value: "ID: " + contadorLembretes + "\nNome: " + lembrete + "\nTelefone: " + telefone}, ...lembretes];
     });
-
+    // setNome("");
+    // setTelefone("");
+    //console.log (lembrete);
   }
 
-  const removerContato = (keyASerRemovida) => {
-    setContatos(contatos => {
-      return contatos.filter(contato => contato.key !== keyASerRemovida);
+  const removerLembrete = (keyASerRemovida) => {
+    setLembretes(lembretes =>{
+      return lembretes.filter(lembrete => lembrete.key !== keyASerRemovida);
     })
   }
+  
 
   return (
-    <View style={styles.container}>
-      <View style={styles.welcome}>
-        <Text style={styles.welcomeTitle}>Cadastre um nome e um telefone!</Text>
-      </View>
-      <ContatoInput 
-        onAdicionarContato={adicionarContato}
-      />
-      <FlatList 
-        data={contatos}
+
+    <View>
+      <Cabecalho titulo={'Agenda de Contatos'}/>
+      <View padding={TelaPrincal.TelaPrincipalPadding}>
+        <LembreteInput onAdicionarLembrete={adicionarLembrete}/>
+        <FlatList
+        data={lembretes}
         renderItem={
-          contato => (
-            <ContatoItem 
-              contato={contato.item.value}
-              chave={contato.item.key}
-              onDelete={removerContato}
+          lembrete => (
+            <LembreteItem 
+              lembrete={lembrete.item.value}
+              chave={lembrete.item.key}
+              onDelete={removerLembrete}
             />
-          )
+          )          
         }
       />
+      </View>
     </View>
+      
   );
 }
